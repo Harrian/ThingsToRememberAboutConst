@@ -50,31 +50,33 @@ a constant version was like.
 const std::array<const std::array<int, 9>, 9> matrix;
 ```
 
-I arrived at this because if I have an array of just
-`std::array<int, 9>` that I want to be constant I
+I arrived at this because if I have an array of
+`std::array<int, 9>` that I want to be constant then I
 just slap `const` right in front of it to get
-`const std::array<int, 9>`. From here I came to what
-I the version I thought by just repeating this
-process twice for the second dimension.
+`const std::array<int, 9>`. From here, I came to the
+version above by just repeating this process twice for
+the second dimension.
 
 There's one thing that should've served as a warning
 that I was going down a path that wasn't well justifed.
 This was the fact that I've never, in any other project,
-seen the templated code I had to create to make
-non-`const` and `const` versions easily compatibile. The
-compiler errors and warnings would've made some type of
-compatibility code necessary.
+seen the templated code that I had to create to make
+non-`const` and `const` versions easily compatibile with
+each other. The compiler errors would've made some type
+of compatibility code necessary. So why didn't other
+projects have it anywhere?
 
-In the case of the project where this question originated
+In the case of the project where this question originated,
 I continued on ward with creating the compatibility code
-and using it. I did this as a learning exercise in template
-meta programming features I hadn't used much, specifically
-SFINAE and parameter pack/unpacking.
+for the `non-const` and `const` types. I did this as a
+learning exercise in template meta programming features
+I hadn't used much, specifically SFINAE and parameter
+pack/unpacking.
 
-Now there was one other more obvious thing that should've
-made it clear something was wrong. That more obvious thing
-was that there was no `const` next to the `int` but if you
-try the following:
+Now, there was one other more obvious thing that should've
+made it clear something was wrong. That thing was there
+was no `const` next to the `int` but if you try the
+following:
 
 ```
 const std::array<int, 2> array{0,1};
@@ -83,7 +85,7 @@ int & pos0 = array[0];
 
 Then you'll get a compilation error. This compilation error
 would've lead me to the documentation that I needed to see
-to know what was going on. In fact as I wrote this code
+to know what was going on. In fact, as I wrote this code
 I believed it would not work because part of the benifit of
 `const` on standard containers is that the values returned
 from inside them should also be `const`.
