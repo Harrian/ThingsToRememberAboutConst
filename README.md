@@ -78,7 +78,7 @@ made it clear something was wrong. That thing was there
 was no `const` next to the `int` but if you try the
 following:
 
-```
+```cpp
 const std::array<int, 2> array{0,1};
 int & pos0 = array[0];
 ```
