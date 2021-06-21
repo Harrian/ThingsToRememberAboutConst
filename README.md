@@ -100,3 +100,81 @@ Thus the simpilest solution would've been simply:
 ```cpp
 const std::array<std::array<int, 9>, 9> matrix;
 ```
+
+# Other `const` things
+
+Things that I've discovered about const that don't directly
+relate to some actual code that I've tried to work through.
+
+## const prevents members from being modified.
+
+I've known for a long time that using the `const`
+specifier on a member function is what allows that member
+function to be called by `const` version fo the object.
+For example:
+
+```cpp
+#include <cstdio>
+
+class Foo
+{
+  private:
+    int x;
+  public:
+    Foo(int x):x(x){}
+    void bar(void) const
+    {
+      std::printf("%d\n", x);
+    }
+};
+
+void FooDoesBar(int x)
+{
+  const Foo foo(x);
+  foo.bar();
+}
+```
+
+But besides allowing the `bar` method to be called from
+`const Foo` objects, the compiler will also check that we
+don't modify any member variables in the const qualified
+method. The following will not compile:
+
+```cpp
+#include <cstdio>
+
+class Foo
+{
+  private:
+    int x;
+  public:
+    Foo(int x):x(x){}
+    void bar(void) const
+    {
+      x = 1;
+      std::printf("%d\n", x);
+    }
+};
+
+void FooDoesBar(int x)
+{
+  const Foo foo(x);
+  foo.bar();
+}
+```
+
+Rightly so, g++ 8.3.0 tells me:
+
+```
+k.cpp: In member function ‘void Foo::bar() const’:
+k.cpp:11:11: error: assignment of member ‘Foo::x’ in read-only object
+       x = 1;
+```
+
+To me this is a big deal because I frequently tag const on member
+variables which causes all kinds of problems. (Can't use them with
+`std::vector` for example.) Turns out in a large large majority of
+cases I don't actually need the member variables to be `const`. I
+just want them to be treated as `const` in member functions. Which
+is exactly the feature of `const` qualified member functions i just
+described.
